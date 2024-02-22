@@ -21,6 +21,8 @@ import { courseCategory, courseLevel, coursePrice } from "src/config/constants"
 import { editorModules } from "src/config/editor.config"
 import TextField from "../text-field/text-field"
 import TextAreaField from "../text-area-field/text-area-field"
+import SelectField from "../select-field/select-field"
+import TagField from "../tag-field/tag-filed"
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
 
@@ -34,7 +36,9 @@ const InstructorManageCourse = () => {
     setFile(file)
   }
 
-  const onSubmit = (formDate: FormikValues) => {}
+  const onSubmit = (formDate: FormikValues) => {
+    console.log(formDate)
+  }
 
   return (
     <>
@@ -57,34 +61,20 @@ const InstructorManageCourse = () => {
                     label={"Excerpt"}
                   />
                   <Flex gap={4}>
-                    <Box w={"full"}>
-                      <FormLabel>
-                        What will students learn in your course?{" "}
-                        <Box as={"span"} color={"red.300"}>
-                          *
-                        </Box>
-                      </FormLabel>
-                      <TagsInput
-                        value={learned}
-                        onChange={setLearned}
-                        name="learn"
-                        placeHolder="Full project..."
-                      />
-                    </Box>
-                    <Box w={"full"}>
-                      <FormLabel>
-                        Requirements{" "}
-                        <Box as={"span"} color={"red.300"}>
-                          *
-                        </Box>
-                      </FormLabel>
-                      <TagsInput
-                        value={requirements}
-                        onChange={setRequirements}
-                        name="requirements"
-                        placeHolder="Basic JavaScript..."
-                      />
-                    </Box>
+                    <TagField
+                      label=" What will students learn in your course?"
+                      name="learn"
+                      placeholder="Full project..."
+                      formik={formik}
+                      errorMessage=""
+                    />
+                    <TagField
+                      label="Requirements"
+                      name="requirements"
+                      placeholder="Basic JavaScript..."
+                      errorMessage=""
+                      formik={formik}
+                    />
                   </Flex>
                   <Box>
                     <FormLabel mb={3}>
@@ -100,6 +90,7 @@ const InstructorManageCourse = () => {
                     h={14}
                     colorScheme={"facebook"}
                     rightIcon={<GiSave />}
+                    type="submit"
                   >
                     Create course
                   </Button>
@@ -107,67 +98,32 @@ const InstructorManageCourse = () => {
               </Box>
               <Box w={"30%"}>
                 <Stack spacing={5}>
-                  <FormControl isRequired>
-                    <FormLabel>Level</FormLabel>
-                    <Select
-                      borderRadius={"8px"}
-                      placeholder={"-"}
-                      height={14}
-                      focusBorderColor={"green.500"}
-                    >
-                      {courseLevel.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl isRequired>
-                    <FormLabel>Category</FormLabel>
-                    <Select
-                      borderRadius={"8px"}
-                      placeholder={"-"}
-                      height={14}
-                      focusBorderColor={"green.500"}
-                    >
-                      {courseCategory.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl isRequired>
-                    <FormLabel>Price</FormLabel>
-                    <Select
-                      borderRadius={"8px"}
-                      height={14}
-                      focusBorderColor={"green.500"}
-                    >
-                      {coursePrice.map((option) => (
-                        <option key={option} value={option}>
-                          {option.toLocaleString("en-US", {
-                            style: "currency",
-                            currency: "USD",
-                          })}
-                        </option>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <Box>
-                    <FormLabel>
-                      Course tags{" "}
-                      <Box as={"span"} color={"red.300"}>
-                        *
-                      </Box>
-                    </FormLabel>
-                    <TagsInput
-                      value={tags}
-                      onChange={setTags}
-                      name="tags"
-                      placeHolder="JavaScript..."
-                    />
-                  </Box>
+                  <SelectField
+                    name="Level"
+                    label="Level"
+                    placeholder="-"
+                    arrOptions={courseLevel}
+                  />
+                  <SelectField
+                    name="Category"
+                    label="Category"
+                    placeholder="-"
+                    arrOptions={courseCategory}
+                  />
+                  <SelectField
+                    name="Price"
+                    label="Price"
+                    placeholder="-"
+                    arrOptions={coursePrice}
+                  />
+
+                  <TagField
+                    placeholder="JavaScript..."
+                    label="Course tags"
+                    errorMessage=""
+                    formik={formik}
+                    name="tags"
+                  />
                   <Box>
                     <FormLabel>
                       Course preview image{" "}
