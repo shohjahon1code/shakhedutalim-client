@@ -8,6 +8,7 @@ import {
   Input,
   Select,
   Stack,
+  Text,
   Textarea,
 } from "@chakra-ui/react"
 import { Form, Formik, FormikValues } from "formik"
@@ -23,26 +24,39 @@ import TextField from "../text-field/text-field"
 import TextAreaField from "../text-area-field/text-area-field"
 import SelectField from "../select-field/select-field"
 import TagField from "../tag-field/tag-filed"
+import {
+  CourseValidation,
+  manageCourseValues,
+} from "src/validation/course.validation"
+import {
+  InstructorManageCourseProps,
+  SubmitValuesInterface,
+} from "./instructor-manage-course.props"
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
 
-const InstructorManageCourse = () => {
-  const [learned, setLearned] = useState<string[]>()
-  const [requirements, setRequirements] = useState<string[]>()
-  const [tags, setTags] = useState<string[]>()
-  const [file, setFile] = useState(null)
+const InstructorManageCourse = ({
+  submitHandler,
+  titleBtn,
+}: InstructorManageCourseProps) => {
+  const [file, setFile] = useState<File>()
 
-  const handleChange = (file) => {
+  const handleChange = (file: File) => {
     setFile(file)
   }
 
   const onSubmit = (formDate: FormikValues) => {
-    console.log(formDate)
+    const data = formDate as SubmitValuesInterface
+    submitHandler(data)
   }
 
   return (
     <>
-      <Formik onSubmit={onSubmit} initialValues={{}}>
+      <Formik
+        onSubmit={onSubmit}
+        initialValues={manageCourseValues}
+        validationSchema={CourseValidation.create}
+      >
         {(formik) => (
           <Form>
             <Flex mt={12} gap={4}>
@@ -55,7 +69,7 @@ const InstructorManageCourse = () => {
                   />
 
                   <TextAreaField
-                    name="excerp"
+                    name="excerpt"
                     placeholder="Full course about JavaScript"
                     height={"150"}
                     label={"Excerpt"}
@@ -66,13 +80,13 @@ const InstructorManageCourse = () => {
                       name="learn"
                       placeholder="Full project..."
                       formik={formik}
-                      errorMessage=""
+                      errorMessage={formik.errors.learn as string}
                     />
                     <TagField
                       label="Requirements"
                       name="requirements"
                       placeholder="Basic JavaScript..."
-                      errorMessage=""
+                      errorMessage={formik.errors.requirements as string}
                       formik={formik}
                     />
                   </Flex>
@@ -83,7 +97,19 @@ const InstructorManageCourse = () => {
                         *
                       </Box>
                     </FormLabel>
-                    <ReactQuill modules={editorModules} />
+                    <ReactQuill
+                      modules={editorModules}
+                      onChange={(data) =>
+                        formik.setFieldValue("description", data)
+                      }
+                      value={formik.values.description}
+                    />
+                    {formik.errors.description &&
+                      formik.touched.description && (
+                        <Text mt={2} fontSize="14px" color="red.500">
+                          {formik.errors.description as string}
+                        </Text>
+                      )}
                   </Box>
                   <Button
                     w={"full"}
@@ -92,7 +118,7 @@ const InstructorManageCourse = () => {
                     rightIcon={<GiSave />}
                     type="submit"
                   >
-                    Create course
+                    {titleBtn}
                   </Button>
                 </Stack>
               </Box>
@@ -105,13 +131,13 @@ const InstructorManageCourse = () => {
                     arrOptions={courseLevel}
                   />
                   <SelectField
-                    name="Category"
+                    name="category"
                     label="Category"
                     placeholder="-"
                     arrOptions={courseCategory}
                   />
                   <SelectField
-                    name="Price"
+                    name="price"
                     label="Price"
                     placeholder="-"
                     arrOptions={coursePrice}
@@ -120,7 +146,7 @@ const InstructorManageCourse = () => {
                   <TagField
                     placeholder="JavaScript..."
                     label="Course tags"
-                    errorMessage=""
+                    errorMessage={formik.errors.tags as string}
                     formik={formik}
                     name="tags"
                   />

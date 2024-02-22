@@ -4,6 +4,7 @@ import { InstructorManageCourse } from "src/components"
 import SectionTitle from "src/components/section-title/section-title"
 
 const CreateCourseComponent = () => {
+  const onSubmit = () => {}
   return (
     <>
       <SectionTitle
@@ -11,7 +12,10 @@ const CreateCourseComponent = () => {
         subtitle="Note that when you're creating course it will be draft"
       />
       <Divider mt={5} />
-      <InstructorManageCourse />
+      <InstructorManageCourse
+        titleBtn="Create Course"
+        submitHandler={onSubmit}
+      />
     </>
   )
 }
